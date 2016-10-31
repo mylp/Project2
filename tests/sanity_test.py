@@ -9,6 +9,7 @@ import signal
 import re
 import sys
 import shutil
+import StringIO
 
 file_locations = os.path.expanduser(os.getcwd())
 logisim_location = os.path.join(os.getcwd(),"logisim.jar")
@@ -31,18 +32,24 @@ class TestCase():
                             stdout=subprocess.PIPE)
     try:
       reference = open(self.tracefile)
-      passed = compare_unbounded(proc.stdout,reference)
+      debug_buffer = StringIO.StringIO()
+      passed = compare_unbounded(proc.stdout,reference,debug_buffer)
     finally:
       os.kill(proc.pid,signal.SIGTERM)
     if passed:
       return (True, "Matched expected output")
     else:
+      print debug_buffer.getvalue()
       return (False, "Did not match expected output")
 
-def compare_unbounded(student_out, reference_out):
+def compare_unbounded(student_out, reference_out, debug):
   while True:
+    debug.write("-----------------------\n")
     line1 = student_out.readline()
+    debug.write(line1)
     line2 = reference_out.readline()
+    debug.write(line2)
+   
     if line2 == '':
       break
     if line1 != line2:
