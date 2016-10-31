@@ -54,7 +54,7 @@ def compare_unbounded(student_out, reference_out, debug):
   while True:
     line1 = student_out.readline()
     line2 = reference_out.readline()
-    debug.append((line1, line2))
+    debug.append((line1.rstrip(), line2.rstrip()))
    
     if line2 == '':
       break
