@@ -12,7 +12,8 @@ import shutil
 import decode_out as dec
 import csv
 
-file_locations = os.path.expanduser(os.getcwd())
+#file_locations = os.path.expanduser(os.getcwd())
+file_locations = "."
 #logisim_location = os.path.join(os.getcwd(),"logisim.jar")
 logisim_location = "logisim.jar"
 
@@ -53,9 +54,9 @@ class TestCase():
 
 def compare_unbounded(student_out, reference_out, debug):
   while True:
-    line1 = student_out.readline()
-    line2 = reference_out.readline()
-    debug.append((line1.rstrip(), line2.rstrip()))
+    line1 = student_out.readline().rstrip()
+    line2 = reference_out.readline().rstrip()
+    debug.append((line1, line2))
    
     if line2 == '':
       break
