@@ -29,7 +29,7 @@ class TestCase():
   def __call__(self, typ):
     oformat = dec.get_test_format(typ)
     if not oformat:
-        print "CANNOT format test type"
+        print("CANNOT format test type")
         return (False, "Error in the test")
 
     try:
@@ -39,28 +39,28 @@ class TestCase():
         else:
             [oformat.validate(x) for x in self.expected]
     except dec.OutputFormatException as e:
-        print "Error in formatting of expected output:"
-        print "\t", e
+        print("Error in formatting of expected output:")
+        print("\t", e)
         return (False, "Error in the test")
 
     output = tempfile.TemporaryFile(mode='r+')
     command = ["java","-jar",logisim_location,"-tty","table", self.circfile]
     proc = subprocess.Popen(command,
                             stdin=open(os.devnull),
-                            stdout=subprocess.PIPE)
+                            stdout=subprocess.PIPE, text=True)
     try:
       debug_buffer = [] 
       passed = compare_unbounded(proc.stdout,self.expected, oformat, debug_buffer)
     except dec.OutputFormatException as e:
-        print "Error in formatting of Logisim output:"
-        print "\t", e
+        print("Error in formatting of Logisim output:")
+        print("\t", e)
         return (False, "Error in the test")
     finally:
       os.kill(proc.pid,signal.SIGTERM)
     if passed:
       return (True, "Matched expected output")
     else:
-      print "Format is student then expected"
+      print("Format is student then expected")
       wtr = csv.writer(sys.stdout, delimiter='\t')
       oformat.header(wtr)
       for row in debug_buffer:
@@ -84,20 +84,20 @@ def compare_unbounded(student_out, expected, oformat, debug):
 
 def run_tests(tests):
   # actual submission testing code
-  print "Testing files..."
+  print("Testing files...")
   tests_passed = 0
   tests_failed = 0
 
   for description,test,typ in tests:
     test_passed, reason = test(typ)
     if test_passed:
-      print "\tPASSED test: %s" % description
+      print("\tPASSED test: %s" % description)
       tests_passed += 1
     else:
-      print "\tFAILED test: %s (%s)" % (description, reason)
+      print("\tFAILED test: %s (%s)" % (description, reason))
       tests_failed += 1
   
-  print "Passed %d/%d tests" % (tests_passed, (tests_passed + tests_failed))
+  print("Passed %d/%d tests" % (tests_passed, (tests_passed + tests_failed)))
 
 class OutputProvider(object):
     def __init__(self, format):
@@ -130,7 +130,7 @@ class ReferenceFileParser(OutputProvider):
                 yield values 
 
 tests = [
-  ("ALU add (with overflow) test, with output in python",
+  ("ALU add (with overflow) test",
         TestCase(os.path.join(file_locations,'alu-add.circ'),
                  [[0, 0, 0, 0x7659035D],
                   [1, 1, 0, 0x87A08D79],
